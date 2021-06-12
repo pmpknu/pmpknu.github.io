@@ -3,6 +3,8 @@
 <head>
   <title>*** of mandl</title>
 
+  <link rel="stylesheet" href="main.css">
+
   <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
 
   <script id="shader-fs" type="x-shader/x-fragment">
@@ -20,7 +22,7 @@
 
       z = z0;
 
-      for (int i = 0; i < 1048576; i++)
+      for (int i = 0; i < 8192; i++)
       {
         if (i > a)
           break;
@@ -55,8 +57,6 @@
   <script type="text/javascript">
     var gl;
     var num_of_iterations;
-    var glblMouseCoordX;
-    var glblMouseCoordY;
     var glblMouseClick;
     var OldX;
     var OldY;
@@ -148,6 +148,8 @@
       gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
       gl.uniform1f(shaderProgram.iterations_uniform, num_of_iterations);
       gl.uniform1f(shaderProgram.mousewheel_uniform, OldWheel);
+      gl.uniform1f(shaderProgram.mousecoordx_uniform, OldX);
+      gl.uniform1f(shaderProgram.mousecoordy_uniform, OldY);
     }
 
     var squareVertexPositionBuffer;
@@ -191,11 +193,9 @@
     function webGLStart() {
       // default cell width
       num_of_iterations = 256;
-      glblMouseCoordX = 0;
-      glblMouseCoordY = 0;
       glblMouseClick = 0;
-      OldX = 0;
-      OldY = 0;
+      OldX = 250;
+      OldY = 250;
       OldWheel = 100.0;
 
       document.getElementById('input_num_of_iterations').value = num_of_iterations;
@@ -230,19 +230,24 @@
 
   <script>
     function MouseCoordProcess(e) {
-      glblMouseCoordX = e.clientX;
-      glblMouseCoordY = e.clientY;
-      var coor = "Coords: (" + glblMouseCoordX + "," + glblMouseCoordY + ")";
-      document.getElementById("demo").innerHTML = coor;
+      var coor = "Coords: (" + e.clientX + "," + e.clientY + ")";
+      document.getElementById("CoordsOfMouse").innerHTML = coor;
 
       if (glblMouseClick === 1) {
-        gl.uniform1f(shaderProgram.mousecoordx_uniform, OldX += e.movementX);
-        gl.uniform1f(shaderProgram.mousecoordy_uniform, OldY += e.movementY);
+        OldX += e.movementX;
+        OldY += e.movementY;
       }
     }
 
     function MouseWheelProcess(e) {
       OldWheel += e.deltaY;
+
+      if (OldWheel === 0)
+        OldWheel = 1;
+    }
+
+    function ClearCoordsOfMouse() {
+      document.getElementById("CoordsOfMouse").innerHTML = "";
     }
   </script>
 
@@ -251,15 +256,15 @@
 
 <body onload="webGLStart();">
 
-  <canvas id="wegl-canvas" style="border: none;" width="500" height="500" onmousemove="MouseCoordProcess(event)"
+  <canvas id="wegl-canvas" style="border: none;" width="500" height="500" onmousemove="MouseCoordProcess(event)" onmouseout="ClearCoordsOfMouse()"
     onmousedown="glblMouseClick = 1;" onmouseup="glblMouseClick = 0;" onwheel="MouseWheelProcess(event)"></canvas>
 
   <br />
 
   <label for="input_num_of_iterations">num of flex</label> <input type="text" id="input_num_of_iterations"
     onkeyup="update_num_of_iterations()"><br>
-
-  <p id="demo"></p>
+    
+  <p id="CoordsOfMouse"></p>
 </body>
 
 </html>
