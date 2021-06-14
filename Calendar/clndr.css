@@ -1,0 +1,11 @@
+.weekdays {
+    margin: 0;
+    height: 7%;
+    background-color: rgb(0, 255, 0);
+  }
+
+.weekdays td {
+    font-size:14px;
+    letter-spacing: 2px;
+    color: rgba(13, 0, 192, 0.575);
+  }

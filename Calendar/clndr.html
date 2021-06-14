@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="./clndr.css">
+    <meta charset="utf-8">
+    <title>Calendar</title>
+
+    <script type="text/javascript">
+        let date = new Date();
+
+        function init() {
+            ClndrSet(date);
+        }
+
+        function ClndrSet(chosen_date) {
+            let first_day = new Date(chosen_date.getFullYear(), chosen_date.getMonth(), 1);
+            let month = date.toLocaleString('default', { month: 'long' });
+            let table = '';
+        }
+
+    </script>
+</head>
+
+<body onload="init()">
+    <table>
+        <tr> </tr>
+    </table>
+</body>
+
+</html>

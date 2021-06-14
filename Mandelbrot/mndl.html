@@ -1,58 +1,13 @@
 <html>
 
 <head>
-  <title>*** of mandl</title>
-
-  <link rel="stylesheet" href="main.css">
+  <title>mandl</title>
 
   <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
 
-  <script id="shader-fs" type="x-shader/x-fragment">
-    precision mediump float;
+  <script id="shader-fs" type="x-shader/x-fragment"></script>
 
-    uniform float iterations;
-    uniform float mouseCoordX;
-    uniform float mouseCoordY;
-    uniform float mouseWheel;
-
-    void main(void)
-    {
-      vec2 z, z1, z0 = vec2((gl_FragCoord.x - mouseCoordX) / mouseWheel, (gl_FragCoord.y + mouseCoordY - 500.0) / mouseWheel);
-      int n, a = int(iterations);
-
-      z = z0;
-
-      for (int i = 0; i < 8192; i++)
-      {
-        if (i > a)
-          break;
-
-        z1.x = z.x * z.x - z.y * z.y + z0.x;
-        z1.y = 2.0 * z.x * z.y + z0.y;
-        z = z1;
-
-        if (z.x * z.x + z.y * z.y > 4.0)
-          n = i; 
-      }
-      
-      float col = float(n) / 4.0;
-
-      gl_FragColor = vec4(col / 2.0, col / 4.0, col / 8.0, 1.0);
-      //gl_FragColor = vec4(mouseCoordX / 501.0, mouseCoordY / 501.0, col / 8.0, 1.0);
-    }
-</script>
-
-  <script id="shader-vs" type="x-shader/x-vertex">
-    attribute vec3 aVertexPosition;
-
-    uniform mat4 uMVMatrix;
-    uniform mat4 uPMatrix;
-
-    void main(void)
-    {
-        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-    }
-</script>
+  <script id="shader-vs" type="x-shader/x-vertex"></script>
 
   <script type="text/javascript">
     var gl;
@@ -74,71 +29,70 @@
       }
     }
 
+    function getShader(shaderPath) {
+      return new Promise((resolve, reject) => {
+        let shader;
 
-    function getShader(gl, id) {
-      var shaderScript = document.getElementById(id);
-      if (!shaderScript) {
-        return null;
-      }
+        fetch(shaderPath)
+          .then(response => { return response.text(); })
+          .then(text => {
+            if (shaderPath.substr(10, 4) === 'frag')
+              shader = gl.createShader(gl.FRAGMENT_SHADER);
+            else if (shaderPath.substr(10, 4) === 'vert')
+              shader = gl.createShader(gl.VERTEX_SHADER);
+            else
+              reject(shader);
 
-      var str = "";
-      var k = shaderScript.firstChild;
-      while (k) {
-        if (k.nodeType == 3) {
-          str += k.textContent;
-        }
-        k = k.nextSibling;
-      }
+            gl.shaderSource(shader, text);
+            gl.compileShader(shader);
 
-      var shader;
-      if (shaderScript.type == "x-shader/x-fragment") {
-        shader = gl.createShader(gl.FRAGMENT_SHADER);
-      } else if (shaderScript.type == "x-shader/x-vertex") {
-        shader = gl.createShader(gl.VERTEX_SHADER);
-      } else {
-        return null;
-      }
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+              alert(gl.getShaderInfoLog(shader));
+              reject(shader);
+            }
 
-      gl.shaderSource(shader, str);
-      gl.compileShader(shader);
-
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        alert(gl.getShaderInfoLog(shader));
-        return null;
-      }
-
-      return shader;
+            resolve(shader);
+          });
+      });
     }
 
     var shaderProgram;
 
-    function initShaders() {
-      var fragmentShader = getShader(gl, "shader-fs");
-      var vertexShader = getShader(gl, "shader-vs");
+    function initShaders(shadersNames) {
+      return new Promise((resolve, reject) => {
+        let shader_prg;
+        let shaders = shadersNames.map(path => getShader(path));
 
-      shaderProgram = gl.createProgram();
-      gl.attachShader(shaderProgram, vertexShader);
-      gl.attachShader(shaderProgram, fragmentShader);
-      gl.linkProgram(shaderProgram);
+        Promise.all(shaders)
+          .then(list => {
+            shader_prg = gl.createProgram();
 
-      if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-        alert("Could not initialise shaders");
-      }
+            //shaders.forEach(element => gl.attachShader(shader_prg, element));
+            for (let shader of list)
+              gl.attachShader(shader_prg, shader);
 
-      gl.useProgram(shaderProgram);
+            gl.linkProgram(shader_prg);
+            if (!gl.getProgramParameter(shader_prg, gl.LINK_STATUS)) {
+              alert("Could not initialise shaders");
+              reject(shader_prg);
+            }
 
-      shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
-      gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+            gl.useProgram(shader_prg);
 
-      shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
-      shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
-      shaderProgram.iterations_uniform = gl.getUniformLocation(shaderProgram, "iterations");
-      shaderProgram.mousecoordx_uniform = gl.getUniformLocation(shaderProgram, "mouseCoordX");
-      shaderProgram.mousecoordy_uniform = gl.getUniformLocation(shaderProgram, "mouseCoordY");
-      shaderProgram.mousewheel_uniform = gl.getUniformLocation(shaderProgram, "mouseWheel");
+            shader_prg.vertexPositionAttribute = gl.getAttribLocation(shader_prg, "aVertexPosition");
+            gl.enableVertexAttribArray(shader_prg.vertexPositionAttribute);
 
+            shader_prg.pMatrixUniform = gl.getUniformLocation(shader_prg, "uPMatrix");
+            shader_prg.mvMatrixUniform = gl.getUniformLocation(shader_prg, "uMVMatrix");
+            shader_prg.iterations_uniform = gl.getUniformLocation(shader_prg, "iterations");
+            shader_prg.mousecoordx_uniform = gl.getUniformLocation(shader_prg, "mouseCoordX");
+            shader_prg.mousecoordy_uniform = gl.getUniformLocation(shader_prg, "mouseCoordY");
+            shader_prg.mousewheel_uniform = gl.getUniformLocation(shader_prg, "mouseWheel");
+
+            resolve(shader_prg);
+          });
+      });
     }
-
 
     var mvMatrix = mat4.create();
     var pMatrix = mat4.create();
@@ -191,7 +145,6 @@
 
 
     function webGLStart() {
-      // default cell width
       num_of_iterations = 256;
       glblMouseClick = 0;
       OldX = 250;
@@ -209,14 +162,18 @@
 
       var canvas = document.getElementById("wegl-canvas");
       initGL(canvas);
-      initShaders();
-      initBuffers();
 
-      gl.clearColor(0.0, 0.0, 0.0, 1.0);
-      gl.enable(gl.DEPTH_TEST);
+      initShaders(['./shaders/vert.glsl', './shaders/frag.glsl'])
+        .then(shader_prg => {
+          shaderProgram = shader_prg;
+          initBuffers();
 
-      drawScene();
-      tick();
+          gl.clearColor(0.0, 0.0, 0.0, 1.0);
+          gl.enable(gl.DEPTH_TEST);
+
+          drawScene();
+          tick();
+        })
     }
 
     function update_num_of_iterations() {
@@ -256,14 +213,15 @@
 
 <body onload="webGLStart();">
 
-  <canvas id="wegl-canvas" style="border: none;" width="500" height="500" onmousemove="MouseCoordProcess(event)" onmouseout="ClearCoordsOfMouse()"
-    onmousedown="glblMouseClick = 1;" onmouseup="glblMouseClick = 0;" onwheel="MouseWheelProcess(event)"></canvas>
+  <canvas id="wegl-canvas" style="border: none;" width="500" height="500" onmousemove="MouseCoordProcess(event)"
+    onmouseout="ClearCoordsOfMouse()" onmousedown="glblMouseClick = 1;" onmouseup="glblMouseClick = 0;"
+    onwheel="MouseWheelProcess(event)"></canvas>
 
   <br />
 
   <label for="input_num_of_iterations">num of flex</label> <input type="text" id="input_num_of_iterations"
     onkeyup="update_num_of_iterations()"><br>
-    
+
   <p id="CoordsOfMouse"></p>
 </body>
 
