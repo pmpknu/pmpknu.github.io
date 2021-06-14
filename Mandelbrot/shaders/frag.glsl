@@ -12,7 +12,7 @@ void main(void)
 
   z = z0;
 
-  for (int i = 0; i < 8192; i++)
+  for (int i = 0; i < 2048; i++)
   {
     if (i > a)
       break;

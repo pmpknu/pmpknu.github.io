@@ -180,7 +180,17 @@
       data = document.getElementById('input_num_of_iterations').value;
       num_of_iterations = parseInt(data);
       if (isNaN(num_of_iterations))
-        num_of_iterations = 256;
+        num_of_iterations = 8;
+
+      if (/^\d*$/.test(data)) {
+        document.getElementById('input_num_of_iterations').style.background = "white";
+        document.getElementById("mouse_meaning").innerHTML = '';
+      }
+      else {
+        document.getElementById('input_num_of_iterations').style.background = "red";
+        document.getElementById("mouse_meaning").innerHTML = 'enter the natural number';
+        document.getElementById("mouse_meaning").style.color = "red";
+      }
       //alert(data);
     }
   </script>
@@ -199,8 +209,8 @@
     function MouseWheelProcess(e) {
       OldWheel += e.deltaY;
 
-      if (OldWheel === 0)
-        OldWheel = 1;
+      if (OldWheel <= 0)
+        OldWheel = 100;
     }
 
     function ClearCoordsOfMouse() {
@@ -220,7 +230,8 @@
   <br />
 
   <label for="input_num_of_iterations">num of flex</label> <input type="text" id="input_num_of_iterations"
-    onkeyup="update_num_of_iterations()"><br>
+    onkeyup="update_num_of_iterations()">
+  <p id="mouse_meaning"></p><br>
 
   <p id="CoordsOfMouse"></p>
 </body>
