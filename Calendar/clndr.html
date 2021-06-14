@@ -14,18 +14,38 @@
         }
 
         function ClndrSet(chosen_date) {
-            let first_day = new Date(chosen_date.getFullYear(), chosen_date.getMonth(), 1);
-            let month = date.toLocaleString('default', { month: 'long' });
-            let table = '';
+            let table = '<table><caption>' + chosen_date.toLocaleString('default', { month: 'long' }) + ',&nbsp' + chosen_date.getFullYear() +
+                '</caption><tr><td>Su</td><td>Mo</td><td>Tu</td><td>We</td><td>Th</td><td>Fr</td><td>Sa</td></tr><tr>';
+            let first_day = new Date(chosen_date.getFullYear(), chosen_date.getMonth());
+            let cur_mon = chosen_date.getMonth();
+            let cur_date = first_day;
+            let last_day = new Date(chosen_date.getFullYear(), cur_mon + 1, 0);
+
+            for (let i; i < first_day.getDay; i++)
+                table += '<td></td>';
+
+            while (cur_mon == chosen_date.getMonth()) {
+                table += '<td>' + cur_date.getDate() + '</td>';
+
+                if (cur_date.getDay() % 7 == 6)
+                    table += '</tr><tr>';
+
+                cur_date.setDate(cur_date.getDate() + 1);
+            }
+
+            for (let i = cur_date.getDay(); i < last_day.getDay(); i++)
+                table += '<td></td>';
+
+            table += '</tr></table>';
+
+            document.getElementById("calendar").innerHTML = table;
         }
 
     </script>
 </head>
 
 <body onload="init()">
-    <table>
-        <tr> </tr>
-    </table>
+    <div id="calendar"></div>
 </body>
 
 </html>
