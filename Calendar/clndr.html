@@ -8,37 +8,59 @@
 
     <script type="text/javascript">
         let date = new Date();
+        let cur_date;
 
         function init() {
             ClndrSet(date);
+            cur_date = date;
+        }
+
+        function ClndrPrev() {
+            ClndrSet(cur_date = new Date(cur_date.getFullYear(), cur_date.getMonth() - 1, cur_date.getDay()));
+        }
+
+        function ClndrNext() {
+            ClndrSet(cur_date = new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, cur_date.getDay()));
+        }
+
+        function ChangeDataClick() {
+
+            document.getElementById("month").innerHTML = `<input id="click_input_month" placeholder="enter month">` + `<input id="click_input_year" placeholder="enter year">`;
+
+            //ClndrSet(new Date(document.getElementById("click_input_year").value, document.getElementById("click_input_month").value));
+
+            //document.getElementById("month").innerHTML = cur_date.toLocaleString('default', { month: 'long' }) +
+            //    ',&nbsp' + cur_date.getFullYear();
         }
 
         function ClndrSet(chosen_date) {
-            let table = '<table><caption>' + chosen_date.toLocaleString('default', { month: 'long' }) + ',&nbsp' + chosen_date.getFullYear() +
-                '</caption><tr><td>Su</td><td>Mo</td><td>Tu</td><td>We</td><td>Th</td><td>Fr</td><td>Sa</td></tr><tr>';
+            let table = '<table><tr><td id="prev" onclick="ClndrPrev();" colspan="2"></td>' + '<td colspan="3" id="month" onmousedown="ChangeDataClick();"></td>' +
+                '<td id="next" onclick="ClndrNext();" colspan="2"></td></tr>' +
+                '<tr><td id="weekday">Su</td ><td id="weekday">Mo</td><td id="weekday">Tu</td><td id="weekday">We</td><td id="weekday">Th</td><td id="weekday">Fr</td><td id="weekday">Sa</td></tr><tr>';
             let first_day = new Date(chosen_date.getFullYear(), chosen_date.getMonth());
-            let cur_mon = chosen_date.getMonth();
-            let cur_date = first_day;
-            let last_day = new Date(chosen_date.getFullYear(), cur_mon + 1, 0);
+            let last_day = new Date(chosen_date.getFullYear(), chosen_date.getMonth() + 1, 0);
 
-            for (let i; i < first_day.getDay; i++)
+            for (let i = 1; i <= first_day.getDay(); i++)
                 table += '<td></td>';
 
-            while (cur_mon == chosen_date.getMonth()) {
-                table += '<td>' + cur_date.getDate() + '</td>';
+            for (let i = 1; i <= last_day.getDate(); i++) {
+                if (i == new Date().getDate() && chosen_date.getFullYear() == new Date().getFullYear() && chosen_date.getMonth() == new Date().getMonth())
+                    table += '<td id="today">' + i + '</td>';
+                else
+                    table += '<td id="days">' + i + '</td>';
 
-                if (cur_date.getDay() % 7 == 6)
+                if (new Date(first_day.getFullYear(), first_day.getMonth(), i).getDay() % 7 == 6)
                     table += '</tr><tr>';
-
-                cur_date.setDate(cur_date.getDate() + 1);
             }
-
+            /*
             for (let i = cur_date.getDay(); i < last_day.getDay(); i++)
                 table += '<td></td>';
-
+            */
             table += '</tr></table>';
 
             document.getElementById("calendar").innerHTML = table;
+            document.getElementById("month").innerHTML = chosen_date.toLocaleString('default', { month: 'long' }) +
+                ',&nbsp' + chosen_date.getFullYear();
         }
 
     </script>
