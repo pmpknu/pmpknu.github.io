@@ -1,0 +1,160 @@
+@import url('https://matiaslescano.com.ar/static/fonts/pixelicious.css');
+* {
+   margin: 0;
+   padding: 0;
+ }
+
+@keyframes pulse {
+   0% {
+       text-shadow: rgba(255, 255, 255, .9) -0.06em -0.06em, rgba(67, 144, 126, .9) 0 0;
+  }
+   33% {
+       text-shadow: rgba(204, 255, 252, .9) -0.15em -0.15em, rgba(157, 94, 186, .9) 0 0;
+  }
+   66% {
+       text-shadow: rgba(229, 255, 254, .9) -0.06em -0.06em, rgba(157, 94, 186, .9) 0 0;
+  }
+   100% {
+       text-shadow: rgba(179, 255, 251, .9) -0.15em -0.15em, rgba(202, 69, 215, .9) 0 0;
+  }
+}
+
+ body,
+ html {
+    background-image: url(https://i.giphy.com/media/pejC6N6W5GLEPtA27w/giphy.webp);
+}
+
+.cont {
+   position: absolute;
+   width: 100%;
+   height: 100vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   transition-duration: 0.4s;
+   text-align: left;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+#header {
+   vertical-align: middle;  
+   font-family: Pixelicious, monospace;
+   font-size: 5vh;
+   text-transform: uppercase;
+   color: transparent;
+   filter: blur(0.3px);
+   animation: 2s ease-in-out infinite alternate pulse;
+   }
+
+#input_msg::placeholder, #input_name::placeholder {
+   text-align: center;
+   text-align: justify;
+   font-family: roboto condensed, sans-serif;
+   padding-left: 1%;
+   color: rgb(245, 222, 179, 0.7);
+}
+
+#inputs {
+    display: inline-block;
+    flex-direction: row;
+}
+
+#input_msg, #input_name {
+    font-size: 3vh;
+    font-family: roboto condensed, sans-serif, Helvetica, monospace;
+    padding: 5px;
+    
+    padding: 12px 12px;
+    display: inline-block;
+    border: 0px;
+    border-radius: 32px;
+    box-sizing: border-box;
+    background-color: rgba(22, 27, 27, 0.7);
+    color: wheat;
+    outline: 0px;
+}
+#input_name {
+    width: 60%;
+}
+
+
+#input_msg {
+    width: 70%;
+}
+
+#text_box {
+   font-size: 2.7vh; 
+   font-family: roboto condensed, sans-serif;
+   color: wheat;
+}
+
+#text_box_scroll {
+   border: 2px solid #000;
+   border-radius: 8px;
+   margin-top: 1.7%;
+   background-color: rgba(22, 27, 27, 0.801);
+   overflow-y: scroll;
+   overflow-x: hidden;
+   max-height: 700px;
+   min-height: 200px;
+   max-width: 700px;
+   min-width: 200px;
+   height: 70vh;
+   width: 80vw;
+   display: flex;
+   flex-direction: column-reverse;
+}
+#text_box_scroll::-webkit-scrollbar {
+   width: 12px;
+}
+#text_box_scroll::-webkit-scrollbar-track {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.5);
+}
+#text_box_scroll::-webkit-scrollbar-thumb {
+   border: 1px solid rgba(182, 182, 182, 0.8);
+   border-radius: 8px;
+   background-color: rgba(182, 182, 182, 0.9);
+}
+
+#send_msg_bttn {
+   font-size: 3vh;
+   text-align: center;
+   text-align: justify;
+   font-family: roboto condensed, sans-serif; 
+   display: inline-block;
+}
+
+@keyframes show_msg{
+    0%{
+        transform: scaleY(0.27);
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+.old_msg, .new_msg {
+    margin: 0px 30px;
+    border: 1px;
+    border-radius: 32px;    
+    background-color: rgba(22, 27, 27, 0.5);
+}
+
+.el_username {
+    padding: 0px 10px;
+    border: 1px;
+    border-radius: 32px;    
+    background-color: rgba(22, 27, 27, 0.9);
+}
+
+.new_msg {
+    transition: 0.3s; /*Скорость перехода состояния элемента*/
+    animation: show_msg 0.5s 1; /* Указываем название анимации, её время и количество повторов*/
+    animation-fill-mode: forwards; /* Чтобы элемент оставался в конечном состоянии анимации */
+}

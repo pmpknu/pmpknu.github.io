@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF_8" />
+    <link rel="stylesheet" href="./chat.css">
+    <link rel="shortcut icon" href="../bin/favicon.ico" type="image/x-icon">
+    <title>chat</title>
+
+    <script type="text/javascript">
+        function sendMsg() {
+
+            if (document.getElementById("input_name").value != "" &&
+                document.getElementById("input_msg").value != "") {
+                fetch("/msg", {
+                    method: "POST",
+                    headers: { "Contet-Type": "application/json;charset=utf-8" },
+                    body: JSON.stringify({ username: document.getElementById("input_name").value, message: document.getElementById("input_msg").value })
+                });
+                document.getElementById("input_msg").value = '';
+            }
+        }
+
+        let old_str = '';
+
+        function getMsg() {
+            fetch("/msg", { method: 'GET' })
+                .then(response => { return response.text(); })
+                .then(text => {
+                    let messages = JSON.parse(text);
+                    let str = '';
+
+                    for (el of messages.slice(0, -1))
+                        str += `<div class="old_msg"><a class="el_username">${el.username}</a> ${el.message}</div><br>`;
+                    for (el of messages.slice(-1))
+                        str += `<div class="new_msg"><a class="el_username">${el.username}</a> ${el.message}</div><br>`;
+
+                    if (str != old_str)
+                        document.getElementById("text_box").innerHTML = old_str = str;
+                    reloadData();
+                });
+        }
+
+        function reloadData() {
+            setTimeout(getMsg, 1500);
+        }
+
+        function enterKeySendForm(e) {
+            if (e.keyCode == 13) {
+                sendMsg();
+            }
+        };
+
+        function handleMouseMove(event) {
+            const height = window.innerHeight;
+            const width = window.innerWidth;
+            // Creates angles of (-20, -20) (left, bottom) and (20, 20) (right, top)
+            const yAxisDegree = event.pageX / width * 40 - 20;
+            const xAxisDegree = event.pageY / height * -1 * 40 + 20;
+            target.style.transform = `rotateY(${yAxisDegree}deg) rotateX(${xAxisDegree}deg)`;
+            // Set the sheen position
+            setSheenPosition(event.pageX / width, event.pageY / width);
+        }
+
+        function setSheenPosition(xRatio, yRatio) {
+            // This creates a "distance" up to 400px each direction to offset the sheen
+            const xOffset = 1 - (xRatio - 0.5) * 800;
+            const yOffset = 1 - (yRatio - 0.5) * 800;
+            target.style.setProperty('--sheenX', `${xOffset}px`)
+            target.style.setProperty('--sheenY', `${yOffset}px`)
+        }
+    </script>
+</head>
+
+<body onload="reloadData()">
+    <div class="cont">
+        <p id="header">flex chat</p>
+
+        <div id="text_box_scroll">
+            <p id="text_box"></p>
+        </div>
+        <div id="inputs">
+            <input id="input_name" placeholder="nickname">
+            <input id="input_msg" onkeypress="enterKeySendForm(event);" placeholder="message">
+            <input id="send_msg_bttn" type="button" onclick="sendMsg();" value="Send">
+        </div>
+    </div>
+</body>
+
+</html>
