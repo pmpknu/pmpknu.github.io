@@ -21,9 +21,9 @@
 
  body,
  html {
-    /*background-image: url(https://i.giphy.com/media/pejC6N6W5GLEPtA27w/giphy.webp);*/
-    background-image: url(https://i.giphy.com/media/aFTt8wvDtqKCQ/giphy.webp);
-    background-size: 107%;
+    background-image: url(https://i.giphy.com/media/pejC6N6W5GLEPtA27w/giphy.webp);
+    /*background-image: url(https://i.giphy.com/media/aFTt8wvDtqKCQ/giphy.webp);
+    background-size: 107%;*/
 }
 
 .cont {
@@ -118,9 +118,9 @@
    width: 12px;
 }
 #text_box_scroll::-webkit-scrollbar-track {
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(19, 24, 24, 0.801);/*rgba(255, 255, 255, 0.3);*/
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(29, 36, 36, 0.801);/*rgba(255, 255, 255, 0.5);*/
 }
 #text_box_scroll::-webkit-scrollbar-thumb {
    border: 1px solid rgba(182, 182, 182, 0.8);
@@ -148,7 +148,9 @@
 }
 
 .old_msg, .new_msg {
-    margin: 0px 30px;
+    margin: -5px 30px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     border: 1px;
     border-radius: 32px;    
     background-color: rgba(22, 27, 27, 0.5);
@@ -156,6 +158,8 @@
 
 .el_username {
     padding: 0px 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     border: 1px;
     border-radius: 32px;    
     background-color: rgba(22, 27, 27, 0.9);

@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF_8" />
   <link rel="stylesheet" href="./chat2.css">
-  <link rel="shortcut icon" href="../bin/favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>chat</title>
 
   <script src="/socket.io/socket.io.js"></script>
+  <script src="cookie.js"></script>
   <script type="text/javascript">
 
     var socket = io();
+    let chat_name = '';
 
     function sendMsg() {
       let msg = { username: document.getElementById("input_name").value, message: document.getElementById("input_msg").value };
@@ -18,6 +20,7 @@
         socket.emit('smsg', msg);
         document.getElementById("input_msg").value = '';
       }
+      setCookie('name', document.getElementById('input_name').value);
     }
 
     function enterKeySendForm(e) {
@@ -40,11 +43,14 @@
         document.getElementById("text_box").innerHTML += `<div class="new_msg"><a class="el_username">${el.username}</a> ${el.message}</div><br>`;
     });
 
+    function onLoad() {
+      document.getElementById('input_name').value = chat_name = getCookie('name');
+    }
 
   </script>
 </head>
 
-<body>
+<body onload="onLoad();">
   <div class="cont">
     <p id="header">chat</p>
 
@@ -52,8 +58,8 @@
       <p id="text_box"></p>
     </div>
     <div id="inputs">
-      <input id="input_name" placeholder="nickname">
-      <input id="input_msg" onkeypress="enterKeySendForm(event);" placeholder="message">
+      <input id="input_name" placeholder="nickname" maxlength="30">
+      <input id="input_msg" onkeypress="enterKeySendForm(event);" placeholder="message" maxlength="1024">
       <input id="send_msg_bttn" type="button" onclick="sendMsg();" value="Send">
     </div>
   </div>
