@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF_8" />
+  <link rel="stylesheet" href="./chat2.css">
+  <link rel="shortcut icon" href="../bin/favicon.ico" type="image/x-icon">
+  <title>chat</title>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript">
+
+    var socket = io();
+
+    function sendMsg() {
+      let msg = { username: document.getElementById("input_name").value, message: document.getElementById("input_msg").value };
+
+      if (msg.message.trim() != '' && msg.username != '') {
+        socket.emit('smsg', msg);
+        document.getElementById("input_msg").value = '';
+      }
+    }
+
+    function enterKeySendForm(e) {
+      if (e.keyCode == 13) {
+        sendMsg();
+      }
+    }
+
+    socket.on('gmsg', (msg_string) => {
+      let msg = JSON.parse(msg_string);
+
+      document.getElementById("text_box").insertAdjacentHTML('beforeend', `<div class="new_msg"><a class="el_username">${msg.username}</a> ${msg.message}</div><br>`);
+    });
+
+
+    socket.on('lmsg', (msgs_string) => {
+      let msgs = JSON.parse(msgs_string);
+
+      for (el of msgs)
+        document.getElementById("text_box").innerHTML += `<div class="new_msg"><a class="el_username">${el.username}</a> ${el.message}</div><br>`;
+    });
+
+
+  </script>
+</head>
+
+<body>
+  <div class="cont">
+    <p id="header">chat</p>
+
+    <div id="text_box_scroll">
+      <p id="text_box"></p>
+    </div>
+    <div id="inputs">
+      <input id="input_name" placeholder="nickname">
+      <input id="input_msg" onkeypress="enterKeySendForm(event);" placeholder="message">
+      <input id="send_msg_bttn" type="button" onclick="sendMsg();" value="Send">
+    </div>
+  </div>
+</body>
+
+</html>
