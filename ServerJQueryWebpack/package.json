@@ -1,0 +1,28 @@
+{
+  "name": "dg5-chat",
+  "version": "0.0.1",
+  "description": "chat server with socket.io, jquery and webpack",
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1",
+    "jquery": "^3.6.0",
+    "lodash": "^4.17.21",
+    "socket.io": "^4.1.2",
+    "socket.io-client": "^4.1.2"
+  },
+  "main": "serv3.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "homepage": "https://github.com/pmpknu/pmpknu.github.io",
+  "bugs": {
+    "url": "https://github.com/pmpknu/pmpknu.github.io/issues",
+    "email": "gorlyakov.dan.dg5@gmail.com"
+  },
+  "author": "DG5",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^5.39.1",
+    "webpack-cli": "^4.7.2"
+  }
+}
